@@ -1,0 +1,190 @@
+---
+title: "Lab 01:Sampling Distribution and Standard Error"
+author: "Nilanjana Dey"
+date: "2023-11-26"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(help="datasets")
+```
+
+##CHOOSING AN IN-BUILT DATASET
+
+```{r}
+#This dataset includes the data from Violent Crime Rates by US State
+p=USArrests
+p
+```
+## SHAPE OF THE DATASET
+
+```{r}
+dim(p)
+```
+## THE FIRST 6 ROWS OF THE DATASET WILL BE DISPLAYED
+
+```{r}
+head(p)
+```
+##THE LAST 6 ROWS OF THE DATASET WILL BE DISPLAYED
+
+```{r}
+tail(p)
+```
+##QUESTION 1:
+
+## DESCRIPTIVE ANALYSIS OF EACH FACTOR OF THE DATASET
+
+```{r}
+summary(p)
+```
+
+##STANDARD DEVIATION OF THE ASSAULT FACTOR
+
+```{r}
+sd(USArrests$Assault)
+```
+
+
+
+## WE WILL WORK WITH A PARTICULAR FACTOR - "ASSAULT" -> THIS WILL BE THE TARGET VARIABLE
+
+```{r}
+population=USArrests$Assault
+population
+```
+QUESTION 2:
+
+WE SHALL ESTIMATE THE AVERAGE , STANDARD DEVIATION OF THE SAMPLES
+
+```{r}
+samplesize1=15
+samplesize2=10
+```
+
+## A sample of 15 observations has been taken
+
+```{r}
+s1=sample(population,samplesize1,replace=FALSE)
+s1
+```
+
+## A sample of 10 observations has been taken
+
+```{r}
+s2=sample(population,samplesize2,replace=FALSE)
+s2
+```
+## AVERAGE OF SAMPLE 1 HAS BEEN TAKEN
+
+```{r}
+mean(s1)
+```
+
+## AVERAGE OF SAMPLE 2 HAS BEEN TAKEN
+
+```{r}
+mean(s2)
+```
+
+## STANDARD ERROR OF SAMPLE 1 IS TAKEN
+
+```{r}
+sd(s1)/sqrt(samplesize1)
+```
+
+## STANDARD ERROR OF SAMPLE 2 IS TAKEN
+
+```{r}
+sd(s2)/sqrt(samplesize2)
+```
+
+## REPRESENTATION OF SAMPLE 1
+
+```{r}
+hist(s1)
+```
+##REPRESENTATION OF SAMPLE 2 THROUGH HISTOGRAM
+
+```{r}
+hist(s2)
+```
+## QUESTION 3:
+
+ESTIMATION OF THE SAMPLING DISTRIBUTION
+
+
+```{r}
+## FOR SAMPLE 1
+samp_dist_1=replicate(1000,mean(sample(USArrests$Assault,samplesize1,replace=TRUE)))
+samp_dist_1
+```
+```{r}
+# FOR SAMPLE 2
+samp_dist2=replicate(1000,mean(sample(USArrests$Assault,samplesize2,replace=TRUE)))
+samp_dist2
+```
+
+## MEAN OF THE SAMPLE STATISTIC
+
+```{r}
+mean(samp_dist_1) #the mean of the sample statistic is almost equal to the population mean which is 170.8.So the sample of 15 observations is a good way to determine the population mean
+```
+```{r}
+mean(samp_dist2)
+```
+
+## REPRESENTATION OF THE SAMPLING DISTRIBUTION
+
+```{r}
+hist(samp_dist_1)
+```
+```{r}
+hist(samp_dist2)
+```
+## QUESTION 3:
+
+Let us take a sample of 20 observations to check its precision.
+
+
+```{r}
+samp_dist=replicate(1000,mean(sample(USArrests$Assault,20,replace=TRUE)))
+samp_dist
+```
+```{r}
+hist(samp_dist,prob=TRUE)
+lines(density(x=samp_dist), col = "red")
+```
+##the above diagram almost resembles a normal distribution curve.Hence we can conclude that increasing the sample size will cause the sample statistic to follow standard normal distribution according to central limit theorem. 
+
+
+
+```{r}
+mean(samp_dist)
+
+```
+
+
+```{r}
+sd(samp_dist)
+
+#we can see that increasing the sample size has decreased the standard error.This implies that sample size is inversely proportional to standard error.If sample size increases, standard error will decrease, hence increasing the precision.
+```
+
+QUESTION 4:
+
+TO CALCULATE THE STANDARD ERROR OF THE SAMPLE STATISTIC
+
+```{r}
+sd(samp_dist_1) 
+```
+
+
+```{r}
+sd(samp_dist2)
+```
+

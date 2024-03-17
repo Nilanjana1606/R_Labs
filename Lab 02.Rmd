@@ -1,0 +1,94 @@
+---
+title: "Lab 02"
+author: "Nilanjana Dey"
+date: "2023-12-04"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(help='datasets')
+```
+
+```{r}
+#Growth of Loblolly pine trees- dataset
+p=Loblolly
+p
+```
+```{r}
+#dimension of the dataset
+dim(p)
+```
+```{r}
+#first 6 rows
+head(p)
+```
+```{r}
+#last 6 rows
+tail(p)
+```
+
+
+```{r}
+# population- Height of the pine trees
+target_var=Loblolly$height
+target_var
+```
+
+
+```{r}
+#Mean of the population
+mean(target_var)
+```
+```{r}
+#standard deviation of the population
+ sd(target_var)
+```
+```{r}
+samplesize=10
+```
+
+
+```{r}
+samp=sample(target_var,35,replace=FALSE)
+samp
+```
+##TESTING OF HYPOTHESIS
+
+TWO-TAILED
+H0: mean=40
+vs
+H1:mean!=40
+
+```{r}
+library(BSDA)
+z.test(x=samp,alternative="two.sided",mu=40,sigma.x=sd(target_var),conf.level=0.95)
+
+#INTERPRETATION : The p-value is >0.05 which implies that we accept the null hypothesis,i.e.,that population mean is 36.
+```
+
+## RIGHT TAILED TEST
+H0:mean=35
+vs
+H1:mean>35
+
+```{r}
+z.test(x=samp,alternative="greater",mu=35,sigma.x=sd(target_var),conf.level=0.95)
+
+#INTERPRETATION : Since the p-value is greater than 0.05 we accept the null hypothesis,that is, the population mean will be 35.Also the p-value states that the value of the test statistic under H0 can be as extreme as the value of the test statistic calculated using the sample.
+```
+## LEFT TAILED
+
+H0:mean=22
+H1:mean<22
+
+```{r}
+z.test(x=samp,alternative="less",mu=22,sigma.x=sd(target_var),conf.level=0.95)
+#INTERPRETATION:Since the p-value is greater than 0.05 we accept the null hypothesis,that is, the population mean will be 22.Also the p-value states that the value of the test statistic under H0 can be as extreme as the value of the test statistic calculated using the sample.
+```
+
+
+```{r}

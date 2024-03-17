@@ -1,0 +1,125 @@
+---
+title: "Lab 01"
+author: "Nilanjana Dey"
+date: "2023-11-20"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+a=3
+```
+
+#Introduction
+```{r}
+a=c(5,6) #basic operations
+a
+```
+
+#TO FIND THE SAMPLING ERROR AND THE SAMPLING DISTRIBUTION
+```{r}
+#DATASET-The data give the speed of cars and the distances taken to stop.The data has been recorded in the 1920s.
+c=cars
+c
+```
+
+
+```{r}
+library(help="datasets")#get the description of all the in-built datasets
+```
+
+
+```{r}
+
+dim(cars)#rows and columns in the dataset
+```
+
+```{r}
+head(cars)
+tail(cars)
+```
+```{r}
+summary(cars)#descriptive statistics
+```
+#The variable speed of cars varies from 4 km/hr to 25 km/hr
+
+##HISTOGRAM
+```{r}
+hist(cars$speed,xlab="Speed",ylab="frequency",main=" Histogram of Speed ",col=blues9)
+```
+```{r}
+sd(cars$speed) #standard error of the speed
+
+```
+sd value is higher than 0 which indicates that the data points are not close to mean.
+
+
+## Population
+```{r}
+population=cars$speed
+population
+```
+```{r}
+#choosing 20 observations in the sample
+samplesize=20
+#choosing 20 samples from the population using simple random sampling without replacement
+
+s1=sample(population,samplesize,replace=FALSE)
+s1
+```
+```{r}
+# Finding mean of the sample
+mean(s1)
+```
+##STANDARD ERROR
+```{r}
+#STANDARD ERROR
+sd(s1)/sqrt(samplesize)
+```
+
+
+```{r}
+
+samplesize1=10
+s2=sample(population,samplesize1,replace=FALSE)
+s2
+mean(s2)
+```
+```{r}
+#standard error
+sd(s2)/sqrt(samplesize1)
+```
+##SAMPLING DISTRIBUTION
+```{r}
+hist(s1)
+```
+```{r}
+hist(s2)
+```
+#replicate():used to evaluate an expression N number of times repeatedly.
+#Here, it is replicated 1000 times
+
+```{r}
+samp_dist=replicate(1000,mean(sample(cars$speed,20,replace=FALSE)))
+samp_dist
+```
+```{r}
+head(samp_dist)
+mean(samp_dist)
+```
+```{r}
+var(samp_dist)
+```
+```{r}
+hist(samp_dist)
+```
+
+
+
+
+
+
+
+

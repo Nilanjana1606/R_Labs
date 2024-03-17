@@ -1,0 +1,135 @@
+---
+title: "PRACTICE QS."
+author: "Nilanjana Dey"
+date: "2024-02-16"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+BankChurners<- read_csv("C:/Users/NILANJANA/Downloads/BankChurners.csv.zip")
+View(BankChurners)
+BankChurners
+```
+
+
+```{r}
+# the libraries are installed
+library(ggplot2)
+library(ggpubr)
+library(tidyverse)
+library(broom)
+library(AICcmodavg)
+library(dplyr)
+library(BSDA)
+```
+
+
+```{r}
+BankChurners$Education_Level=as.factor(BankChurners$Education_Level)
+levels(BankChurners$Education_Level)
+```
+
+
+```{r}
+BankChurners$Marital_Status=as.factor(BankChurners$Marital_Status)
+levels(BankChurners$Marital_Status)
+```
+
+```{r}
+two_way=aov(Credit_Limit~Education_Level*Marital_Status,data = BankChurners)
+summary(two_way)
+```
+```{r}
+two_way=aov(Credit_Limit~Education_Level+Marital_Status,data = BankChurners)
+summary(two_way)
+```
+```{r}
+TukeyHSD(two_way, conf.level=.95)
+```
+```{r}
+pop1=filter(BankChurners,Attrition_Flag == 'Existing Customer')
+pop1
+```
+```{r}
+sample1=sample(pop1$Total_Trans_Amt,2000,replace=TRUE)
+```
+
+```{r}
+pop2=filter(BankChurners,Attrition_Flag == 'Attrited Customer')
+pop2
+```
+```{r}
+sample2=sample(pop2$Total_Trans_Amt,500,replace=TRUE)
+```
+
+```{r}
+z.test(x=sample1,y=sample2,
+alternative = "two.sided",
+mu = 0,
+sigma.x = sd(pop2$Total_Trans_Amt),
+sigma.y = sd(pop2$Total_Trans_Amt),
+conf.level = 0.95
+)
+```
+```{r}
+one_way=aov(Credit_Limit~Card_Category,data = BankChurners)
+summary(one_way)
+```
+```{r}
+one_way=aov(Credit_Limit~Gender,data = BankChurners)
+summary(one_way)
+```
+```{r}
+pop3=filter(BankChurners,Card_Category=='Blue')
+pop3
+```
+
+```{r}
+sample3=sample(pop3$Gender,3000,replace=TRUE)
+```
+
+```{r}
+s=as.data.frame(sample3)
+count(s,sample3)
+```
+```{r}
+n=3000
+x=1638
+prop.test(x, n, p = 0.6, alternative = "two.sided",
+          correct = TRUE)
+```
+```{r}
+pop4=filter(BankChurners,Gender=='F')
+pop4
+pop5=filter(BankChurners,Gender=='M')
+pop5
+```
+
+```{r}
+sample4=sample(pop4$Credit_Limit,2000,replace=FALSE)
+```
+
+```{r}
+sample5=sample(pop5$Credit_Limit,1000,replace=FALSE)
+```
+
+```{r}
+var.test(sample4,sample5, alternative = "two.sided", conf.level = 0.9)
+```
+```{r}
+sample6=sample(pop3$Total_Revolving_Bal,350,replace=FALSE)
+```
+
+
+```{r}
+z.test(x=sample6,alternative="two.sided",mu=1325,sigma.x=sd(pop3$Total_Revolving_Bal),conf.level=0.95)
+```
+```{r}
+
+```
+

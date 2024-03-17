@@ -1,0 +1,113 @@
+---
+title: "Lab 07"
+author: "Nilanjana Dey"
+date: "2024-01-09"
+output: word_document
+---
+
+#INTRODUCTION:
+
+This dataset contains all physical and clinical parameters to determine PCOS and infertility related issues. There are a total of 44 parameters.
+
+This data is collected from 10 different hospitals across Kerala, India.
+
+The unit used is feet to cm
+
+Blood pressure entered as systolic and diastolic separately
+
+RBS means Random glucose test
+
+Beta-HCG cases are mentioned as Case I and II
+
+Blood Group indications: A+ = 11, A- = 12, B+ = 13, B- = 14, O+ =15, O- = 16, AB+ =17, AB- = 18
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(EnvStats)
+```
+
+## LOADING DATASET
+```{r}
+library(readxl)
+PCOS <- read_excel("C:/Users/NILANJANA/Downloads/jhkjfsfljbj skbjbfjjf.xlsx", 
+    sheet = "Full_new")
+View(PCOS)
+```
+
+SINGLE SAMPLE VARIANCE TEST
+
+
+
+# HERE WE CHOOSE HAEMOGLOBIN LEVEL AS OUR TARGET VARIABLE
+
+```{r}
+
+target_var=PCOS$`Hb(g/dl)`
+```
+```{r}
+
+# A SAMPLE OF 200 OBSERVATIONS IS DRAWN FROM THE SELECTED TARGET VARIABLE
+sample_single=sample(target_var,200,replace=TRUE)
+```
+
+HYPOTHESIS TESTING:
+
+H0 : sigma.squared = 1
+vs
+H1 : sigma.squared != 1
+
+
+```{r}
+# BOTH TAILED TEST
+varTest(sample_single, alternative = "two.sided", conf.level = 0.95, 
+    sigma.squared = 1, data.name = NULL)
+```
+INTERPRETATION : We conclude that the population variance is not equal to the assumed variance since p-value < 0.05.
+
+
+
+## TEST FOR EQUALITY OF TWO POPULATION VARIANCES
+```{r}
+# We are creating 2 populations depending on whether a female has PCOS or not. 
+library(dplyr)
+p1=filter(PCOS,`PCOS (Y/N)` ==0)
+
+```
+```{r}
+library(dplyr)
+p2=filter(PCOS,`PCOS (Y/N)` ==1)
+
+```
+## We choose Weight as our target variable for testing the equality of two population variances.
+
+
+
+```{r}
+# A sample of 150 weights is drawn from 1st population where all females have PCOS
+s1=sample(p1$`Weight (Kg)`,150,replace=TRUE)
+s1
+```
+
+
+```{r}
+
+# A sample of 70 weights is drawn from 2nd population where all females dont have PCOS
+s2=sample(p2$`Weight (Kg)`,70,replace=TRUE)
+s2
+```
+# HYPOTHESIS TESTING
+
+H0: sigma.squared 1 = sigma.squared 2
+vs
+H1: sigma.squared 1 != sigma.squared 2
+```{r}
+# BOTH TAILED TEST
+var.test(s1,s2, alternative = "two.sided", conf.level = 0.95)
+```
+Interpretation : We conclude that the variances of both the populations are equal since the null hypothesis gets accepted as the p-value > 0.05.
+
+Conclusion : The variance of weights of females having PCOS is equal to the variance of Weights of females not having PCOS.This indicates that the distribution of weights for both the populations from their mean weights is equal.

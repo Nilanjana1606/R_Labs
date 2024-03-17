@@ -1,0 +1,129 @@
+---
+title: "LAB-09"
+author: "Nilanjana Dey"
+date: "2024-01-31"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# The Data set is loaded.
+library(readr)
+DRUG <- read_csv("C:/Users/NILANJANA/Downloads/Exercise2_data.csv")
+View(DRUG)
+DRUG
+```
+
+```{r}
+# the libraries are installed
+library(ggplot2)
+library(ggpubr)
+library(tidyverse)
+library(broom)
+library(AICcmodavg)
+```
+
+```{r}
+# we try to identify the levels of "Procedure" factor
+DRUG$Procedure=as.factor(DRUG$Procedure)
+levels(DRUG$Procedure)
+```
+```{r}
+# we try to identify the levels of "Gender" factor
+DRUG$Gender=as.factor(DRUG$Gender)
+levels(DRUG$Gender)
+```
+```{r}
+# we try to identify the levels of "Gender" factor
+DRUG$Drug=as.factor(DRUG$Drug)
+levels(DRUG$Drug)
+```
+
+
+ONE-WAY ANOVA:
+
+H0:There is no significant difference in the PreOpScore with 2 levels of 'Drug' factor -> μ1 = μ2 
+
+vs
+
+H1:μ1 != μ2 
+
+```{r}
+# we perform the one-way anova test for factor 'Drug'
+oneway <- aov(PreOpScore~Drug, data = DRUG)
+summary(oneway)
+```
+##INTERPRETATION : The p-value is greater than 0.05 which indicates the acceptance of H0 which denotes that the 'Drug' factor is insignificant and does not have any effect on the "PreOpScore".
+
+
+
+H0:There is no significant difference in the PreOpScore with 2 levels of 'Gender' factor -> μ1 = μ2 
+
+vs
+
+H1:μ1 != μ2 
+
+
+
+```{r}
+oneway2 <- aov(PreOpScore~Gender, data = DRUG)
+summary(oneway2)
+
+##INTERPRETATION : The p-value is less than 0.05 which indicates the rejection of H0 which denotes that the 'Drug' factor is significant and does effect the "PreOpScore".
+```
+## PAIRED COMPARISON TEST 
+
+
+```{r}
+
+TukeyHSD(oneway2, conf.level=.95)
+
+#Interpretation : Both of levels affect the "PreOpScore" which is evident from the p-value being less than 0.05.
+```
+```{r}
+## Graphical Representation of the confidence interval for the above test
+plot(TukeyHSD(oneway, conf.level=.95), las = 2)
+```
+##TWO WAY ANOVA
+
+We will first check for difference with interaction effect between factors "Gender" and "Procedure".
+
+H0A: There is no significant difference in the PreOpScore with 2 levels of 'Gender' factor μ1 = μ2 
+
+H0B: There is no significant difference in the PreOpScore with 2 levels of 'Procedure' factor μ1 = μ2 
+
+H0AB: The interaction effect of "Gender" and "Procedure" is insignificant.
+
+vs
+
+H1A: atleast one inequality in H0A
+H1B: atleast one inequality in H0B
+H1AB: atleast one inequality in H0A
+
+
+
+```{r}
+two.way <- aov(PreOpScore ~ Gender*Procedure, data = DRUG)
+summary(two.way)
+
+##INTERPRETATION : We can conclude that the interaction effect is not significant here which is evident from the p-value.But 'Gender' factor is significant.
+```
+```{r}
+## We again perform the two-way anova test without interaction effect.
+two.way2 <- aov(PreOpScore ~ Gender+Procedure, data = DRUG)
+summary(two.way2)
+
+## Interpretation : "Gender" is the significant factor.
+```
+```{r}
+## We perform the paired comparison test.
+TukeyHSD(two.way2, conf.level=.95)
+```
+```{r}
+## Graphical representation of the confidence intervals
+plot(TukeyHSD(two.way2, conf.level=.95), las = 2)
+```
+

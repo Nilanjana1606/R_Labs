@@ -1,0 +1,239 @@
+---
+title: "Lab-06"
+author: "Nilanjana Dey"
+date: "2024-01-03"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# INTRODUCTION :
+
+The following dataset comprises the various smartphones trending in the market and their respective features. The dataset has been taken from Kaggle.
+
+The following columns are as follows:
+
+ brand_name 
+ model               
+ price            
+ rating  
+ has_5g         
+ has_nfc        
+ has_ir_blaster  
+ processor_brand
+ num_cores     
+ processor_speed 
+ battery_capacity 
+ fast_charging_available
+ fast_charging     
+ ram_capacity   
+ internal_memory  
+ screen_size
+ refresh_rate    
+ num_rear_cameras 
+ num_front_cameras      
+ os : operating system
+ primary_camera_rear 
+ primary_camera_front 
+ extended_memory_available
+ extended_upto    
+ resolution_width 
+ resolution_height
+
+```{r}
+# The dataset is imported.
+
+library(readxl)
+smartphones <- read_excel("C:/Users/NILANJANA/Downloads/smartphones_cleaned_v6.xlsx")
+View(smartphones)
+```
+```{r}
+# There are 980 observations 
+dim(smartphones)
+```
+```{r}
+# the first 6 observations are displayed
+head(smartphones) 
+```
+```{r}
+# the last 6 observations are printed.
+tail(smartphones)
+```
+
+```{r}
+# HERE ARE DEALING WITH THE DESCRIPTIVE ANALYSIS OF THE ENTIRE DATASET.
+
+summary(smartphones)
+```
+## VISUALIZATION OF SOME OF THE CATEGORICAL COLUMNS OF THE DATASET
+
+```{r}
+# HERE WE ARE REPRESENTING "extended_memory_available" USING FREQUENCY PLOT
+
+x = table(smartphones$extended_memory_available)
+barplot(x,xlab = "YES=1 : NO=0",ylab="COUNT",main="AVAILABLITY OF EXTENDED MEMORY",col = "pink")
+
+# THE PLOT BELOW SHOWS THAT THE NO. OF SMARTPHONES MADE HAVE THE FEATURE OF "EXTENDED MEMORY"
+```
+```{r}
+# Here we shall visualize the smartphones having different ratings using pie chart
+
+library(ggplot2)
+library(dplyr)
+
+k=as.character(smartphones$rating)
+
+ggplot(smartphones, aes(x = "", fill = k)) +
+  geom_bar(position = "fill", width = 1,color="black") +coord_polar(theta = "y")+guides(fill = guide_legend(title = "Rating of the Smartphones"))+theme(axis.title.y = element_blank())+labs(title="PIE CHART FOR SMARTPHONES WITH DIFFERENT RATINGS")
+
+# From the plot given below we can conclude that the count of different ratings is more or less same
+ 
+```
+```{r}
+
+# Here we are plotting the no. of smartphones having 5g and not having 5g.
+
+library(ggplot2)
+
+
+ggplot(smartphones, aes(x = smartphones$has_5g, fill = smartphones$has_5g)) +
+  geom_bar(show.legend=FALSE) +
+  labs(title = "Bar Plot of Smartphones having 5g",x="Has 5g or not", y = "Count")
+
+# From the plot given below the no. of smartphones having 5g is more
+```
+```{r}
+# Here we are plotting the frequency plot of different processor brands
+
+library(ggplot2)
+
+ggplot(smartphones, aes(x = smartphones$processor_brand, fill = smartphones$processor_brand)) +
+  geom_bar(alpha=0.8,show.legend =FALSE ) + coord_flip()+
+  labs(title = "BAR PLOT FOR PROCESSOR BRANDS", y = "COUNT", x = "BRAND NAME")
+
+# The plot given below shows that 'snapdragon' is mostly used followed by 'helio' and 'dimesity'
+```
+```{r}
+
+# Here we are plotting the no. of smartphones having the fast charging facility or not
+library(ggplot2)
+
+m=as.character(smartphones$fast_charging_available)
+ggplot(smartphones, aes(x =m , fill = m)) +
+  geom_bar(show.legend=FALSE) +
+  labs(title = "FREQUENCY PLOT FOR AVAILABLITY OF FAST CHARGING FACILITY", x = "Rating", y = "Count")
+
+# The following plotted graph shows that fast charging facility is available in most of the mobiles
+
+```
+```{r}
+# Here we are representing the different kinds of ram_capacity available in the smartphones using radial plot
+
+library(ggplot2)
+
+d=as.character(smartphones$ram_capacity)
+
+ggplot(smartphones, aes(x = d, fill = d)) +
+  geom_bar(show.legend=FALSE) + coord_polar()+
+  labs(title = "Radial Plot for Ram_Capacity", x = "RAM CAPACITY", y = "Count",color="RAM CAPACITY")
+
+# The following graph indicates that the most of the smartphones have ram_capacity = '8' followed by '6' and '4'
+```
+```{r}
+# Here we are plotting the frequency plot for different types of os used in smartphones
+
+library(ggplot2)
+
+
+ggplot(smartphones, aes(x = smartphones$os, fill = smartphones$os)) +
+  geom_bar() +
+  labs(title = "Bar Plot for Smartphone OS ", x = "OS TYPE", y = "Count")
+
+# From the plot given below we conclude that 'android' is the most widely used os.
+```
+
+
+```{r}
+# Frequency plot for Availability of IR blaster
+library(ggplot2)
+
+
+ggplot(smartphones, aes(x = smartphones$has_ir_blaster, fill = smartphones$has_ir_blaster)) +
+  geom_bar() +
+  labs(title = "Frequency Plot for Availablity of IR BLASTER",y = "Count")
+
+# The following plot indicates that the most of the smartphones have ir-blaster
+```
+# TEST FOR SINGLE POPULATION PROPORTION
+
+# AIM : We shall consider one categorical column from the dataset and perform the single proportion test.
+
+target variable = 'has_5g'
+
+Objective : We shall test whether the proportion of smartphones having 5g facility is equal to the assumed value of 0.56.
+
+
+
+```{r}
+target_var=smartphones$has_5g 
+
+```
+
+```{r}
+# a sample of 300 observations is taken with replacement
+sample1=sample(target_var,300,replace=TRUE)
+```
+
+```{r}
+# The sample taken , is converted into a dataframe
+s=as.data.frame(sample1)
+```
+```{r}
+# Now we get the contingency table showing the total no. of 'TRUE' and 'FALSE' values.
+library(dplyr)
+count(s,sample1)
+```
+##HYPOTHESIS TESTING
+
+BOTH-TAILED TEST
+
+H0: P0=O.56
+VS
+H1: P1!=0.56
+```{r}
+
+n=300
+x=176
+prop.test(x, n, p = 0.56, alternative = "two.sided",
+          correct = TRUE)
+
+# Interpretation : The p-value is >0.05. Therefore we accept the H0 which implies that the true proportion of smartphones having 5g facility is equal to the assumed value of 0.56.
+
+```
+QUESTION 8:
+
+Given : Sample size=600 , no. of students favoring online teaching=180
+
+AIM : We want to test whether the proportion of students favoring online education is equal to the assumed value of '30% students favoring online education'
+
+##HYPOTHESIS TESTING
+
+BOTH-TAILED TEST
+
+H0: P0=O.3
+VS
+H1: P1!=0.3
+
+
+```{r}
+n=600
+x=180
+prop.test(x, n, p = 0.3, alternative = "two.sided",
+          correct = TRUE)
+
+# Interpretation : The p-value is 1 which is more than 0.05 which indicates the acceptance of H0, i.e, our assumption is correct.
+```
+

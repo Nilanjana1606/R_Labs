@@ -1,0 +1,253 @@
+---
+title: "End-Semester"
+author: "Nilanjana Dey"
+date: "2024-02-17"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Healthcare dataset is taken. 
+#The set consists of 10000 rows and 15 columns.
+#The columns are as follows:Name,Age,Gender,Blood Type,Medical Condition,Date of Admission,Doctor,Hospital,Insurance Provider,Billing Amount,Room Number,Admission Type,Discharge Date,Medication,Test Results
+
+library(readr)
+healthcare<- read_csv("C:/Users/NILANJANA/Downloads/healthcare_dataset.csv")
+dim(healthcare)
+head(healthcare)
+```
+```{r}
+library(readr)
+Crop<- read_csv("C:/Users/NILANJANA/Downloads/Crop_recommendation.csv")
+
+```
+```{r}
+# the libraries are called.
+library(BSDA)
+library(dplyr)
+library(EnvStats)
+library(ggpubr)
+library(tidyverse)
+library(broom)
+library(AICcmodavg)
+```
+Question 1:
+
+Dynamic Solutions Ltd., with its head office situated in Kolkata and a branch in
+Mumbai, aims to introduce a new work plan. To gauge worker attitudes towards
+this plan, a survey was conducted. Out of a sample of 500 workers in Kolkata, 62%
+expressed support for the new plan. Conversely, out of a sample of 400 workers in
+Mumbai, 41% were against it. The Personnel Director seeks to determine if there is
+a significant difference in the attitudes of workers between the two locations at a
+5% significance level.
+
+We perform the 2 sample proportion test here.
+
+H0: p1=p2
+
+vs
+
+H1: p1!=p2
+
+where,
+p1=proportion of workers from Kolkata  who are supporting the new plan
+
+p2=proportion of workers from Mumbai who are against the new plan.
+
+sample taken are given as follows:
+
+
+```{r}
+n1=500
+n2=400
+x1=0.62*n1# Out of a sample of 500 workers in Kolkata, 62% expressed support for the new plan
+x2=0.41*n2# out of a sample of 400 workers in Mumbai, 41% were against it
+
+```
+
+```{r}
+x1
+x2
+```
+```{r}
+x=c(x1,x2)
+n=c(500,400)
+prop.test(x,n,alternative="two.sided",conf.level = 0.95)
+
+#Interpretation: We reject H0 because p-value<0.05. This implies that there is difference in the attitude of workers from Kolkata and Mumbai.
+```
+QUESTION 2:
+
+
+Global Solutions Inc. Satisfaction Analysis Question
+The HR department of Global Solutions Inc Corporation conducted a satisfaction
+survey among employees to assess job satisfaction levels. The results revealed that
+772 employees expressed dissatisfaction with their current roles, 1611 reported
+moderate satisfaction, and 737 indicated high satisfaction and the remaining
+employees did not provide satisfaction ratings. However, Global Solutions Inc
+Corporation's HR policies anticipate a distribution of job satisfaction levels in the
+ratio of 1:2:1 for dissatisfied, moderately satisfied, and highly satisfied employees
+respectively. Considering this, analyze whether the observed satisfaction levels
+align with the expected ratios. Perform a hypothesis test using an appropriate
+statistical method to determine if there are any notable deviations exist. Based on
+the test results, draw conclusions about whether further inquiries or actions are
+necessary to address any notable deviations effectively.
+
+Here, we perform the chis-square test of goodness of fit.
+
+H0:The ratios of satisfaction level are equal to the observed frequencies)
+
+vs
+
+H1: at least one inequality in H0 (The given ratios are not equal)
+
+
+
+```{r}
+obs=c(772,1611,737)# these are the observed frequencies given.
+expected_prob=c(1/4,2/4,1/4)# expected probabilities (1:2:1 -> p1:p2:p3)
+# Expected values
+expected <- sum(obs) * expected_prob
+chisq.test(obs,p=expected_prob)# we perform the chi-square test
+
+expected # we can see that there is not much significant difference between observed and expected values
+
+#Hence the chi-square test statistic value is not so high...that's why we get the p-value>0.05 which indicates the acceptance of H0. That is, the given probabilities is equivalent to the observed frequencies.
+```
+
+
+
+Question 3:
+
+Statistical Analysis of Healthcare Data
+a) Using the Health Care dataset, examine whether individuals admitted under
+emergency conditions have an average bill of 25,500, based on a suitable sample
+size, with a significance level of 1%.
+b) Investigate whether there is equal variance in billing amounts among individuals
+with Diabetes and Hypertension. Utilize a suitable statistical test for validation and
+draw meaningful inferences from the results.
+
+
+Part a:
+
+We perform the one sample mean test where population variance is known.
+
+H0: mu=25000(given)
+
+vs
+
+H1: mu!=25000
+
+Our target variable is Billing Amount
+
+```{r}
+
+# First we filter the dataset according to the emergency conditon of the patients
+pop1=filter(healthcare,`Admission Type`=="Emergency")
+dim(pop1)# we get 3367 observations
+```
+```{r}
+# Now we draw sample of 1000 observations from the "Billing amount" column without replacement. 
+sample1=sample(pop1$`Billing Amount`,1000,replace=FALSE)
+```
+
+```{r}
+
+# we perform the z test from the sample values.
+z.test(sample1,alternative="two.sided",mu=25000,sigma.x=sd(pop1$`Billing Amount`),conf.level = 0.9)
+
+#Interpretation: The p-value>0.05 indicates the acceptance of H0. This indicates that the mean billing amount is equal to 25000 for emergency patients.
+```
+Part b:
+
+We perform the test for equality of 2 population variance.
+
+H0: var1=var2
+
+H1: var1!=var2
+
+var1=sample variance of patients having Diabetes
+var2=sample variance of patients having Hypertension
+
+
+```{r}
+# First we filter the dataset according to "Diabetes" and "Hypertension"
+pop2=filter(healthcare,`Medical Condition`=="Diabetes")
+
+pop3=filter(healthcare,`Medical Condition`=="Hypertension")
+
+dim(pop2) #there are 1628 observations for Diabetes patients
+dim(pop3) #there are 1688 observations for Hypertension patients
+```
+```{r}
+# We draw samples of 500 observations from both the populations without replacement
+sample2=sample(pop2$`Billing Amount`,500,replace=FALSE)
+sample3=sample(pop3$`Billing Amount`,500,replace=FALSE)
+```
+
+```{r}
+# Now we perform the F test to check the equality of variances.
+var.test(sample2,sample3,alternative="two.sided",conf.level = 0.95)
+
+#Interpretation: The p-vaue>0.05 indicates the acceptance of H0,i.e,the variances of billing amounts from both the populations are equal. We can conclude that it doesnt matter if a patient is Diabetic or having Hypertension, there will be no difference in variability between the billing amounts of both the categories.
+
+```
+Question 4:
+
+Exploring the Impact of Nitrogen Content in Soil and Crop Types on Soil pH
+Test the significance of the ratio of Nitrogen (N) content in soil and the type of crop label on the average pH level. If the pH level is influenced by the ratio of nitrogen content in soil and the type of crop, conduct appropriate tests to determine which specific ratios of nitrogen content in soil and crop types result in differences.
+
+We perform the two-way ANOVA test :
+
+There are two factors:
+A:ratio of Nitrogen
+B:Crop Type
+
+Observations: Average pH level.
+
+H0A: A is insignificant
+vs
+H1A: A is significant
+
+H0B: B is insignificant
+vs
+H1B: B is significant
+
+
+
+```{r}
+# We check the levels of Factor A
+Crop$N=as.factor(Crop$N)
+levels(Crop$N)
+```
+```{r}
+## We check the levels of Factor B
+
+Crop$label=as.factor(Crop$label)
+levels(Crop$label)
+```
+
+```{r}
+# We first perform the two-way ANOVA test with interaction effect of both Factor A and FActor B for better Precision.
+two_way=aov(ph~label*N,data=Crop)
+two_way
+
+#Interpretation: There is no interaction effect between the 2 factors. So, we again perform the ANOVA test without the interaction effect.
+```
+```{r}
+# Without interaction effect
+
+two_way2=aov(ph~label+N,data=Crop)
+summary(two_way2)
+
+#Interpretation: Here we can see that Factor B-Crop type is significantly affecting the average pH level Which is evident from its p-value<0.05. Hence we reject H0B and conclude that Crop type is a significant factor.Hence we perform the Tukey-HSD test to check which Crop types are affecting the ph levels in the soil.
+```
+```{r}
+#TukeyHSD(two_way2, conf.level=.95)
+##Under $label, we take the combinations whose p adj<0.05. Those levels are affectin the pH of the soil.
+```
+
+

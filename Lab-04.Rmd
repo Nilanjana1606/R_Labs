@@ -1,0 +1,97 @@
+---
+title: "LAB-04 TEST FOR SINGLE POPULATION PROPORTION"
+author: "Nilanjana Dey"
+date: "2023-12-15"
+output: word_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#INTRODUCTION
+
+
+```{r}
+library(readr)
+diabetes <- read_csv("C:/Users/NILANJANA/Downloads/diabetes.csv")
+View(diabetes)
+```
+
+# CHOOSING THE TARGET VARIABLE AS 'OUTCOME'
+```{r}
+target_var=diabetes$Outcome
+```
+
+
+```{r}
+target_var
+```
+
+# A SAMPLE OF 300 IS DRAWN FROM THE NO. OF OUTCOMES WITH REPLACEMENT
+
+```{r}
+
+sample1=sample(target_var,300,replace=TRUE)
+sample1
+```
+
+
+```{r}
+# THE sample drawn is converted into a dataframe for further analysis
+s=as.data.frame(sample1)
+s
+
+```
+
+```{r}
+# We create a contingency table to count the no. of females having diabetes 
+library(dplyr)
+count(s,sample1)
+```
+
+
+##HYPOTHESIS TESTING
+
+## BOTH-TAILED TEST
+
+H0: P0=O.
+VS
+H1: P1!=0.56
+
+```{r}
+n=300
+x=89
+prop.test(x, n, p = 0.56, alternative = "two.sided",
+          correct = TRUE)
+```
+
+## RIGHT TAILED
+
+H0: P0=O.
+VS
+H1: P1>0.56
+
+```{r}
+n=300
+x=89
+prop.test(x, n, p = 0.56, alternative = "greater",
+          correct = TRUE)
+```
+
+## LEFT TAILED
+
+H0: P0=O.
+VS
+H1: P1<0.56
+
+```{r}
+n=300
+x=89
+prop.test(x, n, p = 0.34, alternative = "less",
+          correct = TRUE)
+```
+
+
+

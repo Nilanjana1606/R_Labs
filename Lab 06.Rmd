@@ -1,0 +1,24 @@
+---
+title: 'Lab 06 : Test for 2 population proportion'
+author: "Nilanjana Dey"
+date: "2023-12-19"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+

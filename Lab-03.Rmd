@@ -1,0 +1,132 @@
+---
+title: "Lab-03 : Test for difference between two population mean"
+author: "Nilanjana Dey"
+date: "2023-12-05"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# I downloaded the PIMA DIABETES dataset from Kaggle
+library(readr)
+diabetes <- read_csv("C:/Users/NILANJANA/Downloads/diabetes.csv")
+View(diabetes)
+```
+```{r}
+# Load dplyr package
+library(dplyr)
+
+```
+# We shall take the 2 populations based on the pregnancy numbers 1 and 2 and their respective BMI.So BMI is our target variable.
+
+```{r}
+# Using filter() we seggregate the rows containing pregnancy 1
+population_1=filter(diabetes, Pregnancies == '1')
+population_1
+
+#There are 135 observations
+```
+
+
+```{r}
+#we seggregate the rows containing pregnancy 2
+
+population_2=filter(diabetes, Pregnancies == '2')
+population_2
+
+#there are 103 observations
+```
+
+
+```{r}
+# BMI values of first population
+BMI_1=population_1$BMI
+BMI_1
+
+
+```
+```{r}
+# BMI values of 2nd population
+BMI_2=population_2$BMI
+BMI_2
+```
+```{r}
+
+# Drawing a sample of size 60 from population 1
+sample_1=sample(BMI_1,60,replace=FALSE)
+sample_1
+```
+```{r}
+
+#Drawing a sample of size 50 from population 2
+sample_2=sample(BMI_2,50,replace=FALSE)
+sample_2
+```
+```{r}
+#  S.D of BMI values from population 1
+sd(BMI_1)
+```
+```{r}
+#  S.D of BMI values from population 2
+sd(BMI_2)
+```
+
+##TESTING OF HYPOTHESIS
+
+#Two-tailed
+H0:MEAN_1=MEAN_2
+VS
+H1:MEAN_1!=MEAN_2
+```{r}
+
+#Performing the 2 sample z test
+library(BSDA)
+z.test(x=sample_1,y=sample_2,
+alternative = "two.sided",
+mu = 0,
+sigma.x = sd(BMI_1),
+sigma.y = sd(BMI_2),
+conf.level = 0.95
+)
+
+#Since the p-value is greater than 0.05, we accept the H0.Hence the means of both the populations are similar.
+```
+#Two-tailed
+H0:MEAN_1=MEAN_2
+VS
+H1:MEAN_1>MEAN_2
+
+```{r}
+library(BSDA)
+z.test(x=sample_1,y=sample_2,
+alternative = "greater",
+mu = 0,
+sigma.x = sd(BMI_1),
+sigma.y = sd(BMI_2),
+conf.level = 0.95
+)
+
+#Since the p-value is greater than 0.05, we accept the H0.Hence the means of both the populations are similar.
+```
+#Two-tailed
+H0:MEAN_1=MEAN_2
+VS
+H1:MEAN_1<MEAN_2
+```{r}
+library(BSDA)
+z.test(x=sample_1,y=sample_2,
+alternative = "less",
+mu = 0,
+sigma.x = sd(BMI_1),
+sigma.y = sd(BMI_2),
+conf.level = 0.95
+)
+
+#Since the p-value is greater than 0.05, we accept the H0.Hence the means of both the populations are similar.
+```
+
+
+

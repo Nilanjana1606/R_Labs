@@ -1,0 +1,184 @@
+---
+title: "Lab-10"
+author: "Nilanjana Dey"
+date: "2024-02-12"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+nike <- read_excel("C:/Users/NILANJANA/Downloads/nike_data_2022_09.xlsx")
+View(nike)
+
+```
+
+```{r}
+library(readxl)
+netflix <- read_excel("C:/Users/NILANJANA/Downloads/Best Movie by Year Netflix.xlsx")
+View(netflix)
+netflix
+```
+
+```{r}
+# the libraries are installed
+library(ggplot2)
+library(ggpubr)
+library(tidyverse)
+library(broom)
+library(AICcmodavg)
+library(dplyr)
+```
+
+```{r}
+# we try to identify the levels of "MAIN_GENRE" factor
+netflix$MAIN_GENRE=as.factor(netflix$MAIN_GENRE)
+levels(netflix$MAIN_GENRE)
+```
+```{r}
+# we try to identify the levels of "MAIN_PRODUCTION" factor
+netflix$MAIN_PRODUCTION=as.factor(netflix$MAIN_PRODUCTION)
+levels(netflix$MAIN_PRODUCTION)
+```
+1) Movie data:
+A)Test whether the genre and main production company of a movie is having any significant effect on the the IMDB score.
+
+We will first check for difference with interaction effect between factors "MAIN_PRODUCTION" and "MAIN_GENRE".
+
+H0A: There is no significant difference in the SCORE with 7 levels of 'MAIN_PRODUCTION' factor μ1=μ2=μ3=μ4=μ5=μ6=μ7
+
+H0B: There is no significant difference in the SCORE with 12 levels of 'MAIN_GENRE' factor
+
+H0AB: The interaction effect of "MAIN_PRODUCTION" and "MAIN_SCORE" is insignificant.
+
+vs
+
+H1A: atleast one inequality in H0A
+H1B: atleast one inequality in H0B
+H1AB: atleast one inequality in H0A
+
+```{r}
+two.way <- aov(SCORE ~ MAIN_PRODUCTION*MAIN_GENRE, data = netflix)
+summary(two.way)
+
+#Interpretation: We can see that the two factors and their interaction effect is insignificant which is evident from the p-value.In every case we accept the H0.
+```
+```{r}
+#Without interaction effect
+two.way <- aov(SCORE ~ MAIN_PRODUCTION+MAIN_GENRE, data = netflix)
+summary(two.way)
+
+#Interpretation: Here also the two factors are concluded to be insignificant as p-value>0.05. Hence we don't perform the Tukey-HSD test.
+```
+
+
+2) For the given nike data, test whether the average price of nike products that are in stock and out of stock are significantly differing or not.[ Note: Check the assumptions first]
+
+
+
+
+```{r}
+population_1=filter(nike,availability=='InStock')
+
+```
+
+
+
+```{r}
+sample_1=sample(population_1$price,20,replace=FALSE)
+sample_1
+
+```
+```{r}
+population_2=filter(nike,availability=='OutOfStock')
+population_2
+```
+
+```{r}
+sample_2=sample(population_1$price,10,replace=FALSE)
+sample_2
+```
+#Two-tailed 
+H0:MEAN_1=MEAN_2 
+VS H1:MEAN_1!=MEAN_2
+
+```{r}
+library(BSDA)
+z.test(x=sample_1,y=sample_2,
+alternative = "two.sided",
+mu = 0,
+sigma.x = sd(population_1$price),
+sigma.y = sd(population_2$price),
+conf.level = 0.95
+)
+```
+
+4)Test whether the proportion of nike products that are in white, black, Navy are significantly different or not.
+
+
+
+
+```{r}
+# our target variable is color
+target_var=nike$color
+```
+
+```{r}
+# a sample of 50 observations are drawn
+sample1=sample(target_var,50,replace=TRUE)
+sample1
+```
+```{r}
+# a dataframe is created from the samples
+s=as.data.frame(sample1)
+s
+```
+```{r}
+
+count(s,sample1)
+```
+H0 : the proportion of nike products that are in white, black, Navy are same.
+
+vs 
+
+H1 : the proportion of nike products that are in white, black, Navy are significantly different.
+
+
+
+```{r}
+
+
+x=c(3,1,4)
+n=c(50,50,50)
+prop.test(x, n, alternative = "two.sided", conf.level = 0.95)
+
+#Interpretation: The proportion of nike poducts in white,black and navy blue is sme which is indicated by the acceptance of H0 from the p-value.
+
+```
+3)Take a sample of 250 from the population and test whether the variance of price of nike products is 45. Validate using an appropriate test.
+
+A sample of 25 observations are taken and replicated 250 times.Now we conduct the one-sample variance test where the test sample follows chi-square test.
+
+
+```{r}
+#replicating the sample 
+
+samp_dist=replicate(250,mean(sample(nike$price,25,replace=TRUE)))
+
+```
+H0 : sigma.squared = 45 vs H1 : sigma.squared != 45
+```{r}
+library(EnvStats)
+varTest(samp_dist, alternative = "two.sided", conf.level = 0.95, sigma.squared =45)
+
+#Interpretation: We reject H0 which implies that the varinace is not 45.
+```
+
+
+
+
+
+

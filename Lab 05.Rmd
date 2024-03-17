@@ -1,0 +1,93 @@
+---
+title: 'Lab 05 : Test for 2 population proportion'
+author: "Nilanjana Dey"
+date: "2023-12-19"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+diabetes <- read_csv("C:/Users/NILANJANA/Downloads/diabetes.csv")
+View(diabetes)
+```
+
+```{r}
+dim(diabetes)
+```
+
+```{r}
+library(dplyr)
+
+diabetes$Pregnancies = as.numeric(as.character(diabetes$Pregnancies)) 
+```
+
+## The dataset has 9 coloumns. We shall seggregate the dataset into 2 population based on the no. of 
+```{r}
+pop_1=filter(diabetes,Pregnancies<=2)
+pop_1
+```
+```{r}
+pop_2=filter(diabetes,Pregnancies>2)
+pop_2
+```
+```{r}
+target_var_1=pop_1$Outcome
+```
+
+
+```{r}
+target_var_2=pop_2$Outcome
+```
+
+
+
+```{r}
+
+sample_1=sample(pop_1$Outcome,100,replace=FALSE)
+s1=as.data.frame(sample_1)
+s1
+```
+```{r}
+sample_2=sample(pop_2$Outcome,130,replace=FALSE)
+s2=as.data.frame(sample_2)
+s2
+
+```
+
+
+
+```{r}
+library(plyr)
+
+```
+
+```{r}
+x1=count(s1,sample_1)
+x1
+```
+
+```{r}
+x2=count(s2,sample_2)
+x2
+```
+```{r}
+x=c(27,52)
+n=c(100,130)
+prop.test(x, n, alternative = "two.sided", conf.level = 0.99)
+```
+```{r}
+x=c(27,52)
+n=c(100,130)
+prop.test(x, n, alternative = "greater", conf.level = 0.99)
+```
+```{r}
+x=c(27,52)
+n=c(100,130)
+prop.test(x, n, alternative = "less", conf.level = 0.99)
+```
+
+
